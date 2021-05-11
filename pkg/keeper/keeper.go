@@ -305,6 +305,8 @@ func contextsToStrings(contexts []Context) []string {
 // Sync runs one sync iteration.
 func (c *DefaultController) Sync() error {
 	start := time.Now()
+	// adding a delay into the sync to slow down the run - James already added as a feature in latest version
+	sleep(time.Minute * 2)
 	defer func() {
 		duration := time.Since(start)
 		c.logger.WithField("duration", duration.String()).Info("Synced")
