@@ -31,6 +31,7 @@ import (
 )
 
 func handleGenericComment(c Client, trigger *plugins.Trigger, gc scmprovider.GenericCommentEvent) error {
+	fmt.Printf("\n----------------------------------------------------------Inside generic-comment.go------------------------------------------------------------\n")
 	org := gc.Repo.Namespace
 	repo := gc.Repo.Name
 	number := gc.Number
@@ -94,6 +95,8 @@ func handleGenericComment(c Client, trigger *plugins.Trigger, gc scmprovider.Gen
 	if err != nil {
 		return err
 	}
+	fmt.Printf("\n---------------to Test & to Skip ----------------\n")
+	fmt.Printf("%+v\n %+v\n", toTest, toSkip)
 	return RunAndSkipJobs(c, pr, toTest, toSkip, gc.GUID, trigger.ElideSkippedContexts)
 }
 

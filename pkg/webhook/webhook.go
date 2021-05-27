@@ -160,7 +160,7 @@ func (o *WebhooksController) HandleWebhookRequests(w http.ResponseWriter, r *htt
 		responseHTTPError(w, http.StatusInternalServerError, fmt.Sprintf("500 Internal Server Error: Failed to parse webhook: %s", err.Error()))
 		return
 	}
-	fmt.Printf("========================Printing Request Object =======================================================================")
+	fmt.Printf("----------------------------------------Printing Request Object =======================================================================")
 	fmt.Printf("%+v\n", r)
 	if webhook == nil {
 		logrus.Error("no webhook was parsed")
