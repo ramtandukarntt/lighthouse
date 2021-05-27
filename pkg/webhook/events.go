@@ -127,6 +127,7 @@ func (s *Server) handlePullRequestCommentEvent(l *logrus.Entry, pc scm.PullReque
 }
 
 func (s *Server) handleGenericComment(l *logrus.Entry, ce *scmprovider.GenericCommentEvent) {
+	fmt.Printf("\n--------------------------Handle Generic Comment --------------------------\n")
 	agent, err := s.CreateAgent(l, ce.Repo.Namespace, ce.Repo.Name, ce.HeadSha)
 	if err != nil {
 		agent.Logger.WithError(err).Error("Error creating agent for GenericCommentEvent.")
@@ -142,6 +143,7 @@ func (s *Server) handleGenericComment(l *logrus.Entry, ce *scmprovider.GenericCo
 			s.wg.Add(1)
 			go func(p string, h plugins.GenericCommentHandler) {
 				defer s.wg.Done()
+				fmt.Printf("Invoking-1 %+v using agent %+v for event %+v", h, agent, *ce)
 				if err := h(agent, *ce); err != nil {
 					agent.Logger.WithError(err).Error("Error handling GenericCommentEvent.")
 				}
@@ -152,6 +154,7 @@ func (s *Server) handleGenericComment(l *logrus.Entry, ce *scmprovider.GenericCo
 				s.wg.Add(1)
 				go func(p string, h plugins.CommandEventHandler, m plugins.CommandMatch) {
 					defer s.wg.Done()
+					fmt.Printf("Invoking-2 %+v using agent %+v for event %+v with match value %+v", h, agent, *ce, m)	
 					if err := h(m, agent, *ce); err != nil {
 						agent.Logger.WithError(err).Error("Error handling GenericCommentEvent.")
 					}
