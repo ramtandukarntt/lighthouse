@@ -139,22 +139,26 @@ func (s *Server) handleGenericComment(l *logrus.Entry, ce *scmprovider.GenericCo
 		ce.Number,
 	)
 	for p, h := range s.getPlugins(ce.Repo.Namespace, ce.Repo.Name) {
+		fmt.Printf("\n+++++Invoking-0 h %+v, ----- h.GenericCommentHandler %+v", h, h.GenericCommentHandler)
+		fmt.Printf("\n+++++Invoking-1 using agent %+v ----- for event %+v, ----- commands %+v", agent, *ce, h.Commands)
+
 		if h.GenericCommentHandler != nil {
 			s.wg.Add(1)
 			go func(p string, h plugins.GenericCommentHandler) {
 				defer s.wg.Done()
-				fmt.Printf("Invoking-1 %+v using agent %+v for event %+v", h, agent, *ce)
+				fmt.Printf("\n+++++Invoking-2 h %+v ----- using agent %+v ----- for event %+v", h, agent, *ce)
 				if err := h(agent, *ce); err != nil {
 					agent.Logger.WithError(err).Error("Error handling GenericCommentEvent.")
 				}
 			}(p, h.GenericCommentHandler)
 		}
 		for _, cmd := range h.Commands {
+			fmt.Printf("\n+++++Invoking-3 cmd %+v", cmd)
 			err := cmd.InvokeCommandHandler(ce, func(handler plugins.CommandEventHandler, e *scmprovider.GenericCommentEvent, match plugins.CommandMatch) error {
 				s.wg.Add(1)
 				go func(p string, h plugins.CommandEventHandler, m plugins.CommandMatch) {
 					defer s.wg.Done()
-					fmt.Printf("Invoking-2 %+v using agent %+v for event %+v with match value %+v", h, agent, *ce, m)	
+					fmt.Printf("\n+++++Invoking-4 h %+v ----- m %+v ----- p %+v", h, m, p)
 					if err := h(m, agent, *ce); err != nil {
 						agent.Logger.WithError(err).Error("Error handling GenericCommentEvent.")
 					}
@@ -365,3 +369,4 @@ func actionRelatesToPullRequestComment(action scm.Action, l *logrus.Entry) bool 
 		return false
 	}
 }
+

@@ -1,3 +1,4 @@
+
 package webhook
 
 import (
@@ -160,8 +161,7 @@ func (o *WebhooksController) HandleWebhookRequests(w http.ResponseWriter, r *htt
 		responseHTTPError(w, http.StatusInternalServerError, fmt.Sprintf("500 Internal Server Error: Failed to parse webhook: %s", err.Error()))
 		return
 	}
-	fmt.Printf("----------------------------------------Printing Request Object =======================================================================")
-	fmt.Printf("%+v\n", r)
+	fmt.Printf("\n+++++ request %+v \n webhook %+v", r, webhook)
 	if webhook == nil {
 		logrus.Error("no webhook was parsed")
 
@@ -200,6 +200,8 @@ func (o *WebhooksController) HandleWebhookRequests(w http.ResponseWriter, r *htt
 		return []byte(token)
 	})
 	util.AddAuthToSCMClient(scmClient, token, ghaSecretDir != "")
+
+	fmt.Printf("\n+++++ creating client agent")
 
 	o.server.ClientAgent = &plugins.ClientAgent{
 		BotName:           util.GetBotName(cfg),
@@ -244,6 +246,8 @@ func (o *WebhooksController) HandleWebhookRequests(w http.ResponseWriter, r *htt
 			return
 		}
 	}
+	fmt.Printf("\n+++++ processing webhook")
+
 
 	l, output, err := o.ProcessWebHook(logrus.WithField("Webhook", webhook.Kind()), webhook)
 	if err != nil {
@@ -469,3 +473,4 @@ func responseHTTPError(w http.ResponseWriter, statusCode int, response string) {
 	}).Info(response)
 	http.Error(w, response, statusCode)
 }
+

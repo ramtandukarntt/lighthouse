@@ -2,6 +2,7 @@ package plugins
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -160,6 +161,9 @@ type Command struct {
 
 // InvokeCommandHandler performs command checks (filter, then regex if any) the calls the handler with the match (if any)
 func (cmd Command) InvokeCommandHandler(ce *scmprovider.GenericCommentEvent, handler func(CommandEventHandler, *scmprovider.GenericCommentEvent, CommandMatch) error) error {
+	fmt.Printf("\n+++++Invoking-5 ce  %+v ----- condition, %+v ----- ", *ce, cmd.Action.Condition)
+	fmt.Println(cmd.Action.Condition(*ce))
+
 	if cmd.Action.Handler == nil || (cmd.Action.Condition != nil && !cmd.Action.Condition(*ce)) {
 		return nil
 	}
